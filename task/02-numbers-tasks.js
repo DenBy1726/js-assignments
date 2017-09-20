@@ -183,16 +183,19 @@ function getParallelipidedDiagonal(a,b,c) {
  *   1678, 3  => 2000
  */
 function roundToPowerOfTen(num, pow) {
-    var str = num.toString();
+
     var last;
     for(var i=0;i<pow;i++)
     {
-        last = str[str.length-i - 1];
-        str = str.charAt([str.length-i - 1]).set = '0';
+        last = num/Math.pow(10,i) % 10;
+        if(last > 4)
+        {
+            num += Math.pow(10,i+1);
+
+        }
+        num -= Math.pow(10,i) * last;
     }
-    if(last > 4)
-        str[str.length - pow - 1] + 1;
-    return parseInt(str);
+    return num;
 
 }
 
@@ -214,7 +217,10 @@ function roundToPowerOfTen(num, pow) {
  *   17 => true
  */
 function isPrime(n) {
-    throw new Error('Not implemented');
+    //Sieve of Eratosthenes analog
+    for(var i = 2; i < n; i++)
+        if(n % i === 0) return false;
+    return n !== 1;
 }
 
 /**
