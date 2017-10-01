@@ -292,7 +292,6 @@ function getCardId(value) {
     var sign_i = signes.indexOf(sign);
 
     return nums.length * sign_i + num_i;
-
 }
 
 
