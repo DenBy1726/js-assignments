@@ -30,7 +30,14 @@
  *
  */
 function getFizzBuzz(num) {
-    throw new Error('Not implemented');
+    if(num%3 ===0 && num%5 === 0)
+        return 'FizzBuzz';
+    if(num%3 === 0)
+        return 'Fizz';
+    if(num%5 === 0)
+        return 'Buzz';
+    else
+        return num;
 }
 
 
@@ -46,7 +53,12 @@ function getFizzBuzz(num) {
  *   10 => 3628800
  */
 function getFactorial(n) {
-    throw new Error('Not implemented');
+    //because i hate recursion
+   var rez = 1;
+   for(var i=1;i<=n;i++) {
+       rez *= i;
+   }
+   return rez;
 }
 
 
@@ -63,7 +75,12 @@ function getFactorial(n) {
  *   -1,1  =>  0  ( = -1 + 0 + 1 )
  */
 function getSumBetweenNumbers(n1, n2) {
-    throw new Error('Not implemented');
+    var rez = 0;
+    for(var i=n1;i <= n2;i++)
+    {
+        rez += i;
+    }
+    return rez;
 }
 
 
@@ -82,7 +99,11 @@ function getSumBetweenNumbers(n1, n2) {
  *   10,10,10 =>  true
  */
 function isTriangle(a,b,c) {
-    throw new Error('Not implemented');
+    //сумма любых двух сторон должна быть больше третей
+    if(a + b > c && a + c > b && b + c > a)
+        return true;
+    else
+        return false;
 }
 
 
@@ -119,7 +140,12 @@ function isTriangle(a,b,c) {
  *  
  */
 function doRectanglesOverlap(rect1, rect2) {
-    throw new Error('Not implemented');
+    if ((rect1.left > (rect2.left + rect2.width)) || (rect2.left > (rect1.left + rect1.width)))
+        return false;
+
+    if ((rect1.top > (rect2.top + rect2.height)) || (rect2.top > (rect1.top + rect1.height)))
+        return false;
+    return true;
 }
 
 
@@ -150,7 +176,10 @@ function doRectanglesOverlap(rect1, rect2) {
  *   
  */
 function isInsideCircle(circle, point) {
-    throw new Error('Not implemented');
+    //считаем растояние между точкой и центром окнружности. Должно быть меньше радиуса
+    var x = Math.abs(point.x - circle.center.x);
+    var y = Math.abs(point.y - circle.center.y);
+    return Math.sqrt((x*x + y*y)) < circle.radius;
 }
 
 
@@ -166,7 +195,13 @@ function isInsideCircle(circle, point) {
  *   'entente' => null
  */
 function findFirstSingleChar(str) {
-    throw new Error('Not implemented');
+    for (var i = 0; i < str.length; i++) {
+        var c = str.charAt(i);
+        if (str.indexOf(c) === i && str.indexOf(c, i + 1) === -1) {
+            return c;
+        }
+    }
+    return null;
 }
 
 
@@ -192,7 +227,14 @@ function findFirstSingleChar(str) {
  *
  */
 function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
-    throw new Error('Not implemented');
+    var rez = "";
+    rez += isStartIncluded ? '[' : '(';
+    rez += a>b ? b : a;
+    rez += ", ";
+    rez += a<b ? b : a;
+    rez += isEndIncluded ? ']' : ')';
+
+    return rez;
 }
 
 
@@ -209,7 +251,7 @@ function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
  * 'noon' => 'noon'
  */
 function reverseString(str) {
-    throw new Error('Not implemented');
+    return str.split("").reverse().join("");
 }
 
 
@@ -226,7 +268,7 @@ function reverseString(str) {
  *   34143 => 34143
  */
 function reverseInteger(num) {
-    throw new Error('Not implemented');
+    return num.toString().split("").reverse().join("");
 }
 
 
@@ -251,7 +293,14 @@ function reverseInteger(num) {
  *   4916123456789012 => false
  */
 function isCreditCardNumber(ccn) {
-    throw new Error('Not implemented');
+    var sum = 0;
+    var str = ccn.toString();
+    for(var i = 0; i < str.length; i++) {
+        var add = (Number.parseInt(str[i])) * (2 - (i + str.length) % 2);
+        add -= add > 9 ? 9 : 0;
+        sum += add;
+    }
+    return sum % 10 == 0;
 }
 
 
@@ -270,7 +319,14 @@ function isCreditCardNumber(ccn) {
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
 function getDigitalRoot(num) {
-    throw new Error('Not implemented');
+    do {
+        var str = num.toString();
+        num = 0;
+        for (var i = 0; i < str.length; i++) {
+            num += Number.parseInt(str[i]);
+        }
+    }while(num > 9);
+    return num;
 }
 
 
@@ -296,7 +352,40 @@ function getDigitalRoot(num) {
  *   '{[(<{[]}>)]}' = true 
  */
 function isBracketsBalanced(str) {
-    throw new Error('Not implemented');
+    var i, ch;
+
+    var bracketsMap = new Map();
+    bracketsMap.set(']', '[');
+    bracketsMap.set('}', '{');
+    bracketsMap.set(')', '(');
+    bracketsMap.set('>', '<');
+
+    // Use the spread operator to transform a map into a 2D key-value Array.
+    var closingBrackets = [...bracketsMap.keys()];
+    var openingBrackets = [...bracketsMap.values()];
+
+    var temp = [];
+    var len = str.length;
+
+    for (i = 0; i < len; i++) {
+        ch = str[i];
+
+        if (openingBrackets.indexOf(ch) > -1) {
+            temp.push(ch);
+        } else if (closingBrackets.indexOf(ch) > -1) {
+
+            var expectedBracket = bracketsMap.get(ch);
+            if (temp.length === 0 || (temp.pop() !== expectedBracket)) {
+                return false;
+            }
+
+        } else {
+            // Ignore the characters which do not match valid Brackets symbol
+            continue;
+        }
+    }
+
+    return (temp.length === 0);
 }
 
 
