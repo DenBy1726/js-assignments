@@ -360,7 +360,6 @@ function isBracketsBalanced(str) {
     bracketsMap.set(')', '(');
     bracketsMap.set('>', '<');
 
-    // Use the spread operator to transform a map into a 2D key-value Array.
     var closingBrackets = [...bracketsMap.keys()];
     var openingBrackets = [...bracketsMap.values()];
 
@@ -370,8 +369,12 @@ function isBracketsBalanced(str) {
     for (i = 0; i < len; i++) {
         ch = str[i];
 
+        //кладем в стек скобку если открывающаяся
         if (openingBrackets.indexOf(ch) > -1) {
             temp.push(ch);
+        //если скобка закрываюшаяся, то проверяем является ли она парной
+        //для предыдущей открывающей
+        //если нет то ошибка
         } else if (closingBrackets.indexOf(ch) > -1) {
 
             var expectedBracket = bracketsMap.get(ch);
@@ -380,11 +383,11 @@ function isBracketsBalanced(str) {
             }
 
         } else {
-            // Ignore the characters which do not match valid Brackets symbol
             continue;
         }
     }
 
+    //последовательность скобочная если для каждой скобки нашлась пара, значит стек дубет пуст
     return (temp.length === 0);
 }
 
@@ -421,7 +424,60 @@ function isBracketsBalanced(str) {
  *
  */
 function timespanToHumanString(startDate, endDate) {
-    throw new Error('Not implemented');
+
+    var date = Math.abs(startDate.getTime() - endDate.getTime());
+    switch(true)
+    {
+        case date <= 1000*45:
+        {
+            return 'a few seconds ago';
+        }
+        case date <= 1000*90:
+        {
+            return 'a minute ago';
+        }
+        case date <= 1000*60*45:
+        {
+            var minuteAgo = Math.round((date - 1) / (1000 * 60));
+            return `${minuteAgo} minutes ago`;
+        }
+        case date <= 1000*60*90:
+        {
+            return 'an hour ago';
+        }
+        case date <= 1000*60*60*22:
+        {
+            var hourAgo = Math.round((date - 1) / (1000 * 60 * 60));
+            return `${hourAgo} hours ago`;
+        }
+        case date <= 1000*60*60*36:
+        {
+            return 'a day ago';
+        }
+        case date <= 1000*60*60*24*25:
+        {
+            var dayAgo = Math.round((date - 1) / (1000 * 60 * 60*24));
+            return `${dayAgo} days ago`;
+        }
+        case date <= 1000*60*60*24*45:
+        {
+            return 'a month ago';
+        }
+        case date <= 1000*60*60*24*345:
+        {
+            var monthAgo = Math.round((date - 1) / (1000 * 60 * 60*24*30));
+            return `${monthAgo} months ago`;
+        }
+        case date <= 1000*60*60*24*545:
+        {
+            return `a year ago`;
+        }
+        case date > 1000*60*60*24*545:
+        {
+            var yearAgo = Math.round((date - 1) / (1000 * 60 * 60*24*365));
+            return `${yearAgo} years ago`;
+        }
+    }
 }
 
 
@@ -445,7 +501,13 @@ function timespanToHumanString(startDate, endDate) {
  *    365, 10 => '365'
  */
 function toNaryString(num, n) {
-    throw new Error('Not implemented');
+    let rez = "";
+    do
+    {
+        rez += (num % n).toString();
+    }
+    while(num = Math.floor(num/n));
+    return rez.split("").reverse().join("");
 }
 
 
@@ -462,7 +524,22 @@ function toNaryString(num, n) {
  *   ['/web/favicon.ico', '/web-scripts/dump', '/webalizer/logs'] => '/'
  */
 function getCommonDirectoryPath(pathes) {
-    throw new Error('Not implemented');
+    //идея:
+    //берем первую строку и режим по токенам
+    //далее в цикле берем сл. строку и проверяем равны ли токены
+    //как только один токен не равен, убираем все токены с несовпавшего до конца
+    var rezTokens = pathes[0].split('/');
+    for(var i=1,count;i < pathes.length;i++) {
+        var tempTokens = pathes[i].split('/');
+        for (count = 0; count < tempTokens.length; count++) {
+            if(rezTokens[count] !== tempTokens[count])
+                break;
+        }
+        rezTokens = rezTokens.slice(0,count);
+    }
+    if(rezTokens.length === 0)
+        return "";
+    return rezTokens.join('/')+'/';
 }
 
 
@@ -485,7 +562,19 @@ function getCommonDirectoryPath(pathes) {
  *
  */
 function getMatrixProduct(m1, m2) {
-    throw new Error('Not implemented');
+    var aNumRows = m1.length, aNumCols = m1[0].length,
+        bNumRows = m2.length, bNumCols = m2[0].length,
+        m = new Array(aNumRows);  // initialize array of rows
+    for (var r = 0; r < aNumRows; ++r) {
+        m[r] = new Array(bNumCols); // initialize the current row
+        for (var c = 0; c < bNumCols; ++c) {
+            m[r][c] = 0;             // initialize the current cell
+            for (var i = 0; i < aNumCols; ++i) {
+                m[r][c] += m1[r][i] * m2[i][c];
+            }
+        }
+    }
+    return m;
 }
 
 
@@ -520,7 +609,40 @@ function getMatrixProduct(m1, m2) {
  *
  */
 function evaluateTicTacToePosition(position) {
-    throw new Error('Not implemented');
+    /*
+░░░░░░░░▄▄░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+░░░░░░▄█▀▀░░░░░░░░░░░░░░▄▄▄▄▄▄▄░░░░░░░░░
+░░░░░░▀█▄▄▄▄▄▄░░░░░░░░░░░░▄█▀▀▀░░░░░░░░░
+░░░░░░░░░░░░▀█▄▄▄▄▄▄▄▄▄▄▄▄█░░░░░░░░░░░░░
+░░░░░░░░░░░░██░░░░░░░░░░░███▄░░░░░░░░░░░
+░░░░░░▄▄▄░▄█▀░█▄░░░░░░░░▄█░░█▄░▄▄▄░░░░░░
+░░▄▄█▀▀▀▀▀██▄░░▀█▄░░░░░░█░░▄██▀▀▀▀▀█▄▄░░
+░████▄▄▄▄▄████░░░▀█▄░░░█▀░████▄▄▄▄▄████░
+███████████████░░░░▀█▄██░███████████████
+██████░░░██████░░░░░███▀▀██████░░░██████
+█░░▀███████▀░▀█░░░░▄█░░░░█░░▀███████▀░▀█
+░▀▄░░█████░░▄▀░░░░▄█▄░░░░░▀▄░░█████░░▄▀░
+░░▀▀███████▀▀░░░░░░░░░░░░░░▀▀███████▀▀░░
+░░░░░░▀▀▀░░░░░░░░░░░░░░░░░░░░░░▀▀▀░░░░░░
+   * */
+
+    //ищем по строкам
+    for(let i=0;i<3;i++) {
+        if (position[i][0] === position[i][1] && position[i][1] === position[i][2] && position[i][0] !==undefined) {
+            return position[i][0];
+        }
+    }
+    //ищем по столбцам
+    for(let i=0;i<3;i++) {
+        if (position[0][i] === position[1][i] && position[1][i] === position[2][i] && position[0][i] !==undefined) {
+            return position[0][i];
+        }
+    }
+    //ищем по диагоналям
+    if (position[0][0] === position[1][1] && position[1][1] === position[2][2] && position[1][1] !==undefined)
+        return position[0][0];
+    if (position[0][2] === position[1][1] && position[1][1] === position [2][0] && position[1][1] !==undefined)
+        return position[0][2];
 }
 
 
