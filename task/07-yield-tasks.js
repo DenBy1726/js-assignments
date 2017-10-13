@@ -33,7 +33,22 @@
  *
  */
 function* get99BottlesOfBeer() {
-    throw new Error('Not implemented');
+    var bottles = 99;
+    var leftPart = "",rightPart = "";
+    while(true)
+    {
+        leftPart = `${bottles > 0 ? bottles : 'No more'} bottle${bottles!==1 ?'s' : ''} of beer on the wall,`;
+        rightPart = ` ${bottles > 0 ? bottles : 'no more'} bottle${bottles!==1 ?'s' : ''} of beer.`;
+        yield leftPart + rightPart;
+        leftPart = `${bottles > 0 ?'Take one down and pass it around' : 'Go to the store and buy some more'},`;
+        if(bottles === 0)
+            bottles = 100;
+        rightPart =  ` ${bottles-1 > 0 ? bottles-1 : 'no more'} bottle${bottles-1!==1 ?'s' : ''} of beer on the wall.`;
+        yield leftPart + rightPart;
+        if(bottles === 100)
+            return;
+        bottles--;
+    }
 }
 
 
@@ -47,7 +62,16 @@ function* get99BottlesOfBeer() {
  *
  */
 function* getFibonacciSequence() {
-    throw new Error('Not implemented');
+    var f1 = 0;
+    var f2 = 1;
+    yield f1;
+    yield f2;
+    while(true)
+    {
+        f2 += f1;
+        f1 = f2 -f1;
+        yield f2;
+    }
 }
 
 
@@ -82,7 +106,29 @@ function* getFibonacciSequence() {
  *
  */
 function* depthTraversalTree(root) {
-    throw new Error('Not implemented');
+ /*   while(true) {
+        yield root;
+        // Return the parent before its children
+        for (var node in root.children) {
+            if(node.children !== undefined)
+                if(node.children.length !== 0)
+                depthTraversalTree(node)
+        }
+    }*/
+        // Return the parent before its children
+        if (root.n !== undefined) {
+            yield root;
+            if(root.children !== undefined) {
+                if(root.children.length === 0) {
+                    yield root.children[0];
+                }
+                else
+                {
+                    for (var it of root.children)
+                        yield* depthTraversalTree(it);
+                }
+            }
+        }
 }
 
 
