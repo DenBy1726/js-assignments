@@ -23,7 +23,7 @@
  *    console.log(r.getArea());   // => 200
  */
 function Rectangle(width, height) {
-    throw new Error('Not implemented');
+    return {width,height,getArea: () =>width*height};
 }
 
 
@@ -38,7 +38,7 @@ function Rectangle(width, height) {
  *    { width: 10, height : 20 } => '{"height":10,"width":20}'
  */
 function getJSON(obj) {
-    throw new Error('Not implemented');
+    return JSON.stringify(obj);
 }
 
 
@@ -54,7 +54,9 @@ function getJSON(obj) {
  *
  */
 function fromJSON(proto, json) {
-    throw new Error('Not implemented');
+    var o = JSON.parse(json);
+    Object.setPrototypeOf(o,Rectangle.prototype);
+    return o;
 }
 
 
@@ -105,31 +107,104 @@ function fromJSON(proto, json) {
  *
  *  For more examples see unit tests.
  */
+class Element {
+   constructor()
+   {
+       this._id = [];
+       this._element = [];
+       this._class = [];
+       this._attr = [];
+       this._pseudoClass = [];
+       this._pseudoElement = [];
+   }
+
+    stringify(){
+        let rez = "";
+        if(this._element.length !== 0)
+        {
+            rez += this._element.join('.');
+        }
+        if(this._id.length !== 0)
+        {
+            rez +='#'+this._id;
+        }
+        if(this._class.length !== 0)
+        {
+            rez +='.'+this._class.join('.');
+        }
+        if(this._attr.length !== 0)
+        {
+            rez +='['+this._attr+']';
+        }
+        if(this._pseudoClass.length !== 0)
+        {
+            rez +=':'+this._pseudoClass.join(':');
+        }
+        if(this._pseudoElement.length !== 0)
+        {
+            rez +='::'+this._pseudoElement;
+        }
+        return rez;
+    }
+
+    id(input){
+        this._id.push(input);
+        return this;
+    }
+
+    element(input) {
+        this._element.push(input);
+        return this;
+    }
+
+    class(input) {
+        this._class.push(input);
+        return this;
+    }
+
+    attr(input) {
+        this._attr.push(input);
+        return this;
+    }
+
+    pseudoClass(input) {
+        this._pseudoClass.push(input);
+        return this;
+    }
+
+    pseudoElement(input) {
+        this._pseudoElement.push(input);
+        return this;
+    }
+
+
+
+}
 
 const cssSelectorBuilder = {
 
     element: function(value) {
-        throw new Error('Not implemented');
+        return new Element().element(value);
     },
 
     id: function(value) {
-        throw new Error('Not implemented');
+        return new Element().id(value);
     },
 
     class: function(value) {
-        throw new Error('Not implemented');
+        return new Element().class(value);
     },
 
     attr: function(value) {
-        throw new Error('Not implemented');
+        return new Element().attr(value);
     },
 
     pseudoClass: function(value) {
-        throw new Error('Not implemented');
+        return new Element().pseudoClass(value);
     },
 
     pseudoElement: function(value) {
-        throw new Error('Not implemented');
+        return new Element().pseudoElement(value);
     },
 
     combine: function(selector1, combinator, selector2) {
