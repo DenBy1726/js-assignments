@@ -106,29 +106,18 @@ function* getFibonacciSequence() {
  *
  */
 function* depthTraversalTree(root) {
- /*   while(true) {
-        yield root;
-        // Return the parent before its children
-        for (var node in root.children) {
-            if(node.children !== undefined)
-                if(node.children.length !== 0)
-                depthTraversalTree(node)
+    var nodes = [];
+    nodes.push(root);
+    while (nodes.length) {
+        var cur = nodes.shift();
+        var tempArr = [];
+        if (cur.children) {
+            for (var it of cur.children)
+                tempArr.push(it);
+            nodes.splice(0, 0, ...tempArr);
         }
-    }*/
-        // Return the parent before its children
-        if (root.n !== undefined) {
-            yield root;
-            if(root.children !== undefined) {
-                if(root.children.length === 0) {
-                    yield root.children[0];
-                }
-                else
-                {
-                    for (var it of root.children)
-                        yield* depthTraversalTree(it);
-                }
-            }
-        }
+        yield cur;
+    }
 }
 
 
@@ -154,7 +143,18 @@ function* depthTraversalTree(root) {
  *
  */
 function* breadthTraversalTree(root) {
-    throw new Error('Not implemented');
+    var nodes = [];
+    nodes.push(root);
+    while(nodes.length) {
+        var cur = nodes.shift();
+        var tempArr = [];
+        if (cur.children) {
+            for (var it of cur.children)
+                tempArr.push(it);
+            nodes.splice(nodes.length, 0, ...tempArr);
+        }
+        yield cur;
+    }
 }
 
 
@@ -172,8 +172,27 @@ function* breadthTraversalTree(root) {
  *   [ 1, 3, 5, ... ], [ -1 ] => [ -1, 1, 3, 5, ...]
  */
 function* mergeSortedSequences(source1, source2) {
-    throw new Error('Not implemented');
+    var iter = source1();
+    var iter2 = source2();
+  while(true) {
+      var x = iter.next();
+      var y = iter2.next();
+      if(x.value<y.value) {
+          if (x.done === false)
+              yield x.value;
+          if (y.done === false)
+              yield y.value;
+      }
+      else{
+          if (y.done === false)
+              yield y.value;
+          if (x.done === false)
+              yield x.value;
+      }
+  }
+
 }
+
 
 
 module.exports = {
