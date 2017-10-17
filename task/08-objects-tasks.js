@@ -116,6 +116,9 @@ class Element {
        this._attr = [];
        this._pseudoClass = [];
        this._pseudoElement = [];
+
+       //last element priority
+       this._last = -1;
    }
 
     stringify(){
@@ -147,38 +150,104 @@ class Element {
         return rez;
     }
 
-    id(input){
-        this._id.push(input);
+    element(input) {
+        if(this._element.length === 1)
+            throw new ElementException(0);
+        if(this._last > 0)
+            throw new ElementException(1);
+        this._element.push(input);
+        this._last = 0;
         return this;
     }
 
-    element(input) {
-        this._element.push(input);
+    id(input){
+        if(this._id.length === 1)
+            throw new ElementException(0);
+        if(this._last > 1)
+            throw new ElementException(1);
+        this._id.push(input);
+        this._last = 1;
         return this;
     }
 
     class(input) {
+        if(this._last > 2)
+            throw new ElementException(1);
         this._class.push(input);
+
+        this._last = 2;
         return this;
     }
 
     attr(input) {
+        if(this._last > 3)
+            throw new ElementException(1);
         this._attr.push(input);
+
+        this._last = 3;
         return this;
     }
 
     pseudoClass(input) {
+        if(this._last > 4)
+            throw new ElementException(1);
         this._pseudoClass.push(input);
+        this._last = 4;
         return this;
     }
 
     pseudoElement(input) {
+        if(this._pseudoElement.length === 1)
+            throw new ElementException(0);
+        if(this._last > 5)
+            throw new ElementException(1);
         this._pseudoElement.push(input);
+        this._last = 5;
         return this;
     }
 
 
 
+}
+
+class ComboElement
+{
+    constructor(){
+        this._elements = [];
+        this._combinators = [];
+    }
+
+    push(element,combinator){
+        this._elements.push(element);
+        this._combinators.push(combinator);
+        return this;
+    }
+
+    stringify() {
+        let rez = "";
+        for(let i=0;i<this._elements.length;i++)
+        {
+            rez += this._elements[i].stringify();
+            if(this._combinators[i] !== undefined)
+                rez += " " + this._combinators[i] + " ";
+        }
+        return rez;
+    }
+
+}
+
+class ElementException
+{
+    constructor(id)
+    {
+        switch(id)
+        {
+            case 0:
+                throw `Element, id and pseudo-element should not occur more then one time inside the selector`;
+            case 1:
+                throw  `/Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element/`;
+        }
+    }
 }
 
 const cssSelectorBuilder = {
@@ -208,7 +277,7 @@ const cssSelectorBuilder = {
     },
 
     combine: function(selector1, combinator, selector2) {
-        throw new Error('Not implemented');
+        return new ComboElement().push(selector1,combinator).push(selector2);
     },
 };
 
