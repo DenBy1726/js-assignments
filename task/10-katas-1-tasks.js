@@ -17,8 +17,32 @@
  *  ]
  */
 function createCompassPoints() {
-    throw new Error('Not implemented');
-    var sides = ['N','E','S','W'];  // use array of cardinal directions only!
+    let sides = ['N','E','S','W'];  // use array of cardinal directions only!
+    let rez = [];
+    let counter = 0;
+    for(let i=0,side,nextSide,nextMidSide;i<sides.length;i++){
+        side = getDirection(sides,2*i);
+        nextMidSide = getDirection(sides,(2*i+1)%8);
+        nextSide = getDirection(sides,(2*i+2)%8);
+        let arr = [side,side + 'b' + nextSide,side +  nextMidSide,nextMidSide + 'b' + side,nextMidSide,nextMidSide + 'b'
+        + nextSide,nextSide + nextMidSide,nextSide + 'b' + side];
+        arr.forEach((x)=>{
+            rez.push({abbreviation: x,azimuth: counter});
+            counter+=11.25;
+        });
+    }
+    return rez;
+}
+
+function getDirection(sides,i){
+    let mid = Math.floor(i/2);
+    if(i%2===0)
+        return sides[mid];
+    else if(i%4 === 1)
+        return [sides[mid],sides[mid+1]].join("");
+    else
+        return [sides[(mid+1)%4],sides[mid]].join("");
+
 }
 
 
@@ -56,7 +80,20 @@ function createCompassPoints() {
  *   'nothing to do' => 'nothing to do'
  */
 function* expandBraces(str) {
-    throw new Error('Not implemented');
+    str = "It{{em,alic}iz,erat}e{d,}, please.";
+    let rez = str.split(/{(.*)}/);
+    let rez2 = rez[1].split(/{(.*)}/);
+    // str = str.replace('{','(').replace('}',')');
+   for(let i=0;i<str.length;i++){
+
+   }
+}
+
+function* getToken(str){
+    if(str.charAt(0) === '{')
+        getToken(str.substring(0,str.lastIndexOf('}')));
+    for(let it of str)
+       yield it;
 }
 
 
