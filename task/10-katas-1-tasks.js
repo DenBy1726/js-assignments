@@ -125,8 +125,36 @@ function* getToken(str){
  *
  */
 function getZigZagMatrix(n) {
-    throw new Error('Not implemented');
+    let result = new Array(n).fill().map(()=>new Array(n).fill());
+    let i = 0, j = 0;
+    let d = -1; // -1 для движения вверх, +1 для движения вниз
+    let start = 0, end = n * n - 1;
+    do {
+        //шаг с левого верхнего угла
+        result[i][j] = start++;
+        //шаг с правого нижнего угла
+        result[n - i - 1][n - j - 1] = end--;
+
+        i += d; j -= d;
+
+        //если дошли до края, реверс направления
+        if (i < 0) {
+            i++;
+            d = -d;
+        }
+        else if (j < 0) {
+            j++;
+            d = -d;
+        }
+
+        //до тех пор пока не дошли до середины
+    } while (start < end);
+    //если колво чисел нечетное, то заполняем серединку
+    if (start === end)
+        result[i][j] = start;
+    return result;
 }
+
 
 
 /**
@@ -150,7 +178,68 @@ function getZigZagMatrix(n) {
  *
  */
 function canDominoesMakeRow(dominoes) {
-    throw new Error('Not implemented');
+    //идея:  ставим все блоки по матрице. затем для каждого блока проверяем есть ли хоть один сосед.Если нет то false
+    //1) ищем максимум для заполнения матрицы
+    let max = dominoes.reduce((rez,val) =>{
+        return Math.max(val[0],rez,val[1]);
+    },0) + 1;
+    //создаем матрицу
+    let rez = new Array(max).fill().map(()=>new Array(max).fill(0));
+    //заполняем матрицу
+    dominoes.forEach((val)=>{
+        rez[val[0]][val[1]] = 1;
+        }
+    );
+    //проверяем
+    for(let it of dominoes)
+    {
+        let nearest = sumNearest(rez,it[0],it[1]);
+        let neighbour = sumNeighbour(rez,it[0],it[1]);
+        if(nearest <1 || neighbour > 3)
+            return false;
+    }
+    return true;
+
+}
+
+function sumNearest(arr,x,y){
+    let rez = [];
+    let n = arr.length-1;
+    if(x > 0 && y > 0)
+        rez.push((arr[x-1][y-1]));
+    if(y > 0)
+        rez.push(arr[x][y-1]);
+    if(x < n && y > 0)
+        rez.push(arr[x+1][y-1]);
+    if(x > 0)
+        rez.push(arr[x-1][y]);
+    if(x < n)
+        rez.push(arr[x+1][y]);
+    if(x > 0 && y < n)
+        rez.push(arr[x-1][y+1]);
+    if(y < n)
+        rez.push(arr[x][y+1]);
+    if(x <n && y < n)
+        rez.push(arr[x+1][y+1]);
+    return rez.reduce((rez,val)=>{
+            return rez + val;
+    },0);
+}
+
+function sumNeighbour(arr,x,y){
+    let rez = [];
+    let n = arr.length-1;
+    if(y > 0)
+        rez.push(arr[x][y-1]);
+    if(x > 0)
+        rez.push(arr[x-1][y]);
+    if(x < n)
+        rez.push(arr[x+1][y]);
+    if(y < n)
+        rez.push(arr[x][y+1]);
+    return rez.reduce((rez,val)=>{
+        return rez + val;
+    },0);
 }
 
 
@@ -174,7 +263,30 @@ function canDominoesMakeRow(dominoes) {
  * [ 1, 2, 4, 5]          => '1,2,4,5'
  */
 function extractRanges(nums) {
-    throw new Error('Not implemented');
+    let start = nums[0];
+    let ranges = [];
+    for(let i=0;i<nums.length-1;i++){
+        if(nums[i+1] === nums[i] + 1)
+            continue;
+        if(nums[i] - start > 1)
+            ranges.push([`${start}-${nums[i]}`]);
+        else if(nums[i] - start === 1)
+        {
+            ranges.push([nums[i-1]]);
+            ranges.push([nums[i]]);
+        }
+        else {
+            ranges.push([nums[i]]);
+        }
+        start = nums[i+1];
+    }
+    if(nums[nums.length-1] - start > 1)
+        ranges.push([`${start}-${[nums[nums.length - 1]]}`]);
+    else {
+        ranges.push([nums[nums.length - 2]]);
+        ranges.push([nums[nums.length - 1]]);
+    }
+    return ranges.join(',');
 }
 
 module.exports = {
